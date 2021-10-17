@@ -1,0 +1,14 @@
+web:
+  build: .
+  environment:
+    MYENV: pyvenv
+  volumes:
+    - .:/code
+web_run:
+  extends:
+    service: web
+  command: python manage.py make migration
+  command: python manage.py migrate
+  command: python manage.py runserver 0.0.0.0:8000
+  ports:
+    - "8000:8000"
