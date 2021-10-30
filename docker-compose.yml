@@ -1,14 +1,42 @@
-web:
-  build: .
-  environment:
-    MYENV: pyvenv
-  volumes:
-    - .:/code
-web_run:
-  extends:
-    service: web
-  command: python manage.py make migration
-  command: python manage.py migrate
-  command: python manage.py runserver 0.0.0.0:8000
-  ports:
-    - "8000:8000"
+# web:
+#   build: .
+#   environment:
+#     MYENV: pyvenv
+#   volumes:
+#     - .:/code
+# web_run:
+#   extends:
+#     service: web
+#   command: python manage.py make migration
+#   command: python manage.py migrate
+#   command: python manage.py runserver 0.0.0.0:8000
+#   ports:
+#     - "8000:8000"
+
+
+# https://docs.docker.com/samples/django/
+version: "3.9"
+services: 
+  db:
+      image: postgres:latest
+      volumes:
+        - ./data/db:/var/lib/postgresql/data
+      environment:
+        - POSTGRES_DB=cse312projectdb
+        - POSTGRES_USER=cse312projectuser
+        - POSTGRES_PASSWORD=ourpassword
+  web:
+    build: .
+    environment:
+      MYENV: pyvenv
+      WAIT_HOSTS: db:5432
+    volumes:
+      - .:/code
+
+    #command: python manage.py runserver localhost:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8080:8000"
+    depends_on:
+      - db
